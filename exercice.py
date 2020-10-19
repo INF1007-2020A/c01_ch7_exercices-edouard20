@@ -5,6 +5,10 @@
 import math
 from turtle import setpos, back, forward, left, right
 
+MAX_DEPTH = 4
+BRANCH_LENGTH = 100
+SHRINK_FACTOR = 0.8
+TURN_ANGLE = 20 # degrees
 def calcul_ellipsoide(a:float, b:float, c:float, masse_volumique: float) -> tuple:
     volume = 4/3 * math.pi * a * b * c
     return volume, volume * masse_volumique
@@ -15,12 +19,30 @@ def draw_trunk(BRANCH_LENGTH: int) -> None:
     pendown()
     forward(BRANCH_LENGTH)
 
-def arbre_recursivite(branches_to_draw: int):
-    draw_trunk(10)
-    while branches_to_draw > 0:
-        turtle.forward(5)
-        branches_to_draw -= 1
-        arbre_recursivite(branches_to_draw)
+def draw_left(depth: int, distance:float)-> None:
+    left(TURN_ANGLE)
+    forward(distance * SHRINK_FACTOR)
+
+    draw_tree(depth + 1)
+
+    back(distance * SHRINK_FACTOR)
+    right(TURN_ANGLE)
+
+def draw_right(depth: int, distance:float)-> None:
+    right(TURN_ANGLE)
+    forward(distance * SHRINK_FACTOR)
+
+    draw_tree(depth + 1)
+
+    back(distance * SHRINK_FACTOR)
+    left(TURN_ANGLE)
+
+def draw_tree(depth:int) -> None:
+    distance = BRANCH_LENGTH * SHRINK_FACTOR ** depth
+
+    if depth <= MAX_DEPTH: #quand on arrive au bout
+        draw_left(depth, distance)
+        draw_right(depth, distance)
     
 
 
